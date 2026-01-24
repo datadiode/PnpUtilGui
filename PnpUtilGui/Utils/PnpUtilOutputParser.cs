@@ -14,11 +14,21 @@ namespace PnpUtilGui.Utils
 
             for (var i = 2; i < stringArr.Length - 1; ++i)
             {
-                var driverInfo = new List<string>();
+                var driverInfo = new string[8];
 
                 do
                 {
-                    driverInfo.Add(stringArr[i]);
+                    driverInfo
+                    [
+                        stringArr[i].StartsWith("Published Name:") ? 0 :
+                        stringArr[i].StartsWith("Original Name:") ? 1 :
+                        stringArr[i].StartsWith("Provider Name:") ? 2 :
+                        stringArr[i].StartsWith("Class Name:") ? 3 :
+                        stringArr[i].StartsWith("Class GUID:") ? 4 :
+                        stringArr[i].StartsWith("Driver Version:") ? 5 :
+                        stringArr[i].StartsWith("Signer Name:") ? 6 :
+                        7
+                    ] = stringArr[i];
                     ++i;
                 } while (!string.IsNullOrEmpty(stringArr[i]));
 
@@ -29,19 +39,10 @@ namespace PnpUtilGui.Utils
                     Publisher = GetLineValue(driverInfo[2]),
                     DriverClass = GetLineValue(driverInfo[3]),
                     ClassGuid = GetLineValue(driverInfo[4]),
+                    DateAndVersion = GetLineValue(driverInfo[5]),
+                    CertificateSignerName = GetLineValue(driverInfo[6]),
                 };
 
-                if (driverInfo.Count == 7)
-                {
-                    driver.DateAndVersion = GetLineValue(driverInfo[5]);
-                    driver.CertificateSignerName = GetLineValue(driverInfo[6]);
-                }
-                else
-                {
-                    driver.ClassVersion = GetLineValue(driverInfo[5]);
-                    driver.DateAndVersion = GetLineValue(driverInfo[6]);
-                    driver.CertificateSignerName = GetLineValue(driverInfo[7]);
-                }
                 driverList.Add(driver);
             }
 
