@@ -17,7 +17,11 @@ namespace PnpUtilGui.Utils
             {
                 var output = ExecutePnpUtil(new[] { "/enum-drivers" });
 
-                return Parser.ParseEnumDriverOutput(output);
+                var legacy = output == null;
+                if (legacy)
+                    output = ExecutePnpUtil(new[] { "/e" });
+
+                return Parser.ParseEnumDriverOutput(output, legacy);
             });
         }
 
@@ -25,7 +29,7 @@ namespace PnpUtilGui.Utils
         {
             return Task.Run(() =>
             {
-                var output = ExecutePnpUtil(new[] { "/delete-driver", fileName, force ? "/force" : "" });
+                var output = ExecutePnpUtil(new[] { "/d", fileName, force ? "/f" : "" });
 
                 return string.Join(Environment.NewLine, output.Skip(2).Take(1));
             });
@@ -65,7 +69,7 @@ namespace PnpUtilGui.Utils
                     list.Add(line);
                 }
 
-                return list;
+                return proc.ExitCode == 0 ? list : null;
             }
         }
     }
