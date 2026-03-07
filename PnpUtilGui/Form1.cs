@@ -29,12 +29,12 @@ namespace PnpUtilGui
             {
                 if (i == 0)
                 {
-                    driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
+                    driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
                     continue;
                 }
 
                 driverGridView.Columns[i].ReadOnly = true;
-                driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
+                driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
 
                 if (i == driverGridView.ColumnCount - 1)
                 {
