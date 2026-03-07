@@ -1,16 +1,43 @@
-﻿using System;
+﻿using PnpUtilGui.Models;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using PnpUtilGui.Models;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PnpUtilGui.Utils
 {
     internal class PnpUtilOutputParser
     {
+        [DllImport("kernel32.dll")]
+        static extern uint GetLastError();
+        [DllImport("kernel32.dll", EntryPoint = "LoadLibraryEx", SetLastError = true)]
+        private static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hFile, uint dwFlags);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        static extern int LoadString(IntPtr hInstance, uint uID, StringBuilder lpBuffer, int nBufferMax);
         public List<Driver> ParseEnumDriverOutput(IEnumerable<string> enumerable, bool legacy)
         {
+            var mui = LoadLibraryEx(CultureInfo.CurrentUICulture.Name + "\\pnputil.exe.mui", IntPtr.Zero, 2);
+
             var driverList = new List<Driver>();
             var stringArr = enumerable.ToArray();
+
+            StringBuilder sb = new StringBuilder(100);
+            LoadString(mui, legacy ? 4600u : 2201u, sb, sb.Capacity);
+            var PublishedName = sb.ToString();
+            LoadString(mui, legacy ? 4600u : 2202u, sb, sb.Capacity);
+            var OriginalName = sb.ToString();
+            LoadString(mui, legacy ? 4200u : 2204u, sb, sb.Capacity);
+            var ProviderName = sb.ToString();
+            LoadString(mui, legacy ? 4300u : 2205u, sb, sb.Capacity);
+            var ClassName = sb.ToString();
+            LoadString(mui, legacy ? 4600u : 2207u, sb, sb.Capacity);
+            var ClassGUID = sb.ToString();
+            LoadString(mui, legacy ? 4400u : 2210u, sb, sb.Capacity);
+            var DriverVersion = sb.ToString();
+            LoadString(mui, legacy ? 4500u : 2211u, sb, sb.Capacity);
+            var SignerName = sb.ToString();
 
             for (var i = 2; i < stringArr.Length - 1; ++i)
             {
@@ -20,13 +47,13 @@ namespace PnpUtilGui.Utils
                 {
                     driverInfo
                     [
-                        stringArr[i].StartsWith(legacy ? "Published name :" : "Published Name:") ? 0 :
-                        stringArr[i].StartsWith("Original Name:") ? 1 :
-                        stringArr[i].StartsWith(legacy ? "Driver package provider :" : "Provider Name:") ? 2 :
-                        stringArr[i].StartsWith(legacy ? "Class :" : "Class Name:") ? 3 :
-                        stringArr[i].StartsWith("Class GUID:") ? 4 :
-                        stringArr[i].StartsWith(legacy ? "Driver date and version :" : "Driver Version:") ? 5 :
-                        stringArr[i].StartsWith(legacy ? "Signer name :" : "Signer Name:") ? 6 :
+                        stringArr[i].StartsWith(PublishedName) ? 0 :
+                        stringArr[i].StartsWith(OriginalName) ? 1 :
+                        stringArr[i].StartsWith(ProviderName) ? 2 :
+                        stringArr[i].StartsWith(ClassName) ? 3 :
+                        stringArr[i].StartsWith(ClassGUID) ? 4 :
+                        stringArr[i].StartsWith(DriverVersion) ? 5 :
+                        stringArr[i].StartsWith(SignerName) ? 6 :
                         7
                     ] = stringArr[i];
                     ++i;
