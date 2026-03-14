@@ -1,0 +1,25 @@
+environment:
+  matrix:
+    - job_name: release-any
+      configuration: Release
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
+# https://blog.codeinside.eu/2019/11/30/build-dotnetcore-apps-with-msbuild-to-avoid-strange-netframeworkbased-errors/
+
+build_script:
+  - curl -L https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -o C:/windows/rcedit.exe
+  - nuget restore
+  - msbuild -t:rebuild -p:Configuration=%CONFIGURATION%
+  - call AddFallbackStringResources.bat
+  - '"%ProgramFiles(x86)%/NSIS/makensis.exe" PnpUtilGuiSetup.nsi'
+
+deploy:
+  provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  on:
+    APPVEYOR_REPO_TAG: true
+  auth_token:
+    secure: Ff432aLyTjRB02PAo9YoH+iRttges/GD2mpfggEdsZ+oDFoeYYzu3Z52IzsH+E1y
+
+artifacts:
+  - path: 'PnpUtilGuiSetup.exe'
