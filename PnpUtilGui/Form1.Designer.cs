@@ -44,6 +44,7 @@
             this.driverGridView.AllowUserToAddRows = false;
             this.driverGridView.AllowUserToDeleteRows = false;
             this.driverGridView.AllowUserToOrderColumns = true;
+            this.driverGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.driverGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.driverGridView.MultiSelect = false;
             this.driverGridView.Name = "driverGridView";

@@ -27,19 +27,8 @@ namespace PnpUtilGui
 
             for (var i = 0; i < driverGridView.ColumnCount; i++)
             {
-                if (i == 0)
-                {
-                    driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-                    continue;
-                }
-
-                driverGridView.Columns[i].ReadOnly = true;
+                driverGridView.Columns[i].ReadOnly = i != 0;
                 driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-
-                if (i == driverGridView.ColumnCount - 1)
-                {
-                    driverGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                }
             }
 
             driverGridView.Update();
