@@ -2,12 +2,13 @@ environment:
   matrix:
     - job_name: release-any
       configuration: Release
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
 # https://blog.codeinside.eu/2019/11/30/build-dotnetcore-apps-with-msbuild-to-avoid-strange-netframeworkbased-errors/
 
 build_script:
-  - curl -L https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -o C:/windows/rcedit.exe
+  - curl -LO https://github.com/user-attachments/files/26002363/rcedit.zip
+  - tar xf rcedit.zip -C C:/windows
   - nuget restore
   - msbuild -t:rebuild -p:Configuration=%CONFIGURATION%
   - call AddFallbackStringResources.bat
